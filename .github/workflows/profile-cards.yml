@@ -13,48 +13,35 @@ permissions:
 jobs:
   cards:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
-      # metrics renders inside Docker and commits via the GitHub API directly to
-      # committer_branch -- it never writes into the workspace, so these steps must
-      # run before the git publish step below fetches the branch.
-      - name: Stats card
-        uses: lowlighter/metrics@latest
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          user: ${{ github.repository_owner }}
-          filename: stats.svg
-          output_action: commit
-          committer_branch: output
-          committer_message: Update stats card
-          base: header, activity, community, repositories
-
-      - name: Languages card
-        uses: lowlighter/metrics@latest
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          user: ${{ github.repository_owner }}
-          filename: languages.svg
-          output_action: commit
-          committer_branch: output
-          committer_message: Update languages card
-          base: ""
-          plugin_languages: yes
-          plugin_languages_indepth: yes
-          plugin_languages_sections: most-used, recently-used
-          plugin_languages_colors: github
-          plugin_languages_limit: 8
-          plugin_languages_details: percentage, lines
-          plugin_languages_recent_days: 90
-          plugin_languages_recent_load: 1000
-          plugin_languages_analysis_timeout: 10
-
+      # Runs first: this action writes into dist/ and may clear it.
       - name: Pacman contribution graph
         uses: abozanona/pacman-contribution-graph@main
         with:
           github_user_name: ${{ github.repository_owner }}
+
+      # Official github-readme-stats action -- renders the same cards as the
+      # (currently 503) public instance, so `options` takes the same query string.
+      - name: Stats card
+        uses: readme-tools/github-readme-stats-action@v1
+        with:
+          card: stats
+          path: dist/stats.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: "true"
+          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_rank=false&theme=dracula&hide_border=false&locale=en
+
+      - name: Languages card
+        uses: readme-tools/github-readme-stats-action@v1
+        with:
+          card: top-langs
+          path: dist/languages.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: "true"
+          options: username=${{ github.repository_owner }}&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false&locale=en
 
       - name: Snake contribution graph
         uses: Platane/snk/svg-only@v3
@@ -64,9 +51,9 @@ jobs:
             dist/snake.svg
             dist/snake-dark.svg?palette=github-dark
 
-      # Copies into the existing branch instead of force-pushing, so the cards the
-      # metrics steps committed above survive.
-      - name: Publish contribution graphs to output branch
+      # Copies into the existing branch instead of force-pushing, so nothing
+      # already published is lost.
+      - name: Publish cards to output branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -77,5 +64,5 @@ jobs:
           git switch -C output
           git add -A
           git diff --cached --quiet && echo "No changes to publish" && exit 0
-          git commit -m "Update pacman and snake cards"
+          git commit -m "Update profile cards"
           git push origin output
