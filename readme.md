@@ -79,12 +79,17 @@
 ###
 
 <div data-importer="stats" align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=rootwij&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false" height="150" alt="stats graph"  />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs?username=rootwij&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false" height="150" alt="languages graph"  />
+  <img src="https://raw.githubusercontent.com/rootwij/rootwij/output/stats.svg" width="480" alt="stats graph"  />
+  <img src="https://raw.githubusercontent.com/rootwij/rootwij/output/languages.svg" width="320" alt="languages graph"  />
   <img src="https://streak-stats.demolab.com?user=rootwij&locale=en&mode=daily&theme=dracula&hide_border=false&border_radius=5&order=3" height="150" alt="streak graph"  />
-  <img src="https://github-profile-trophy.vercel.app/?username=rootwij&theme=dracula&column=-1&row=1&margin-w=8&margin-h=8&no-bg=false&no-frame=false" height="150" alt="trophy graph"  />
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=rootwij&radius=16&theme=react&area=true" height="300" alt="activity-graph graph"  />
 </div>
+
+<!-- Trophy card removed: github-profile-trophy.vercel.app returns HTTP 402 (Vercel
+     free-tier quota exhausted on the shared public instance). Restore this line only
+     after self-hosting that project, or leave it out.
+  <img src="https://github-profile-trophy.vercel.app/?username=rootwij&theme=dracula&column=-1&row=1&margin-w=8&margin-h=8&no-bg=false&no-frame=false" height="150" alt="trophy graph"  />
+-->
 
 ###
 
@@ -132,13 +137,17 @@
 ###
 
 <picture data-importer="pacman">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/rootwij/rootwij/pacman-output/pacman-contribution-graph-dark.svg?game=pacman">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/rootwij/rootwij/pacman-output/pacman-contribution-graph.svg?game=pacman">
-  <img alt="pacman contribution graph" src="https://raw.githubusercontent.com/rootwij/rootwij/pacman-output/pacman-contribution-graph.svg?game=pacman">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/rootwij/rootwij/output/pacman-contribution-graph-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/rootwij/rootwij/output/pacman-contribution-graph.svg">
+  <img alt="pacman contribution graph" src="https://raw.githubusercontent.com/rootwij/rootwij/output/pacman-contribution-graph.svg">
 </picture>
 
 ###
 
-<img data-importer="snake" src="https://raw.githubusercontent.com/rootwij/rootwij/snake-output/snake.svg" alt="Snake animation" />
+<picture data-importer="snake">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/rootwij/rootwij/output/snake-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/rootwij/rootwij/output/snake.svg">
+  <img alt="Snake animation" src="https://raw.githubusercontent.com/rootwij/rootwij/output/snake.svg" />
+</picture>
 
 ###
