@@ -17,6 +17,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Both card generators fall back to a repo-scoped token when this is blank,
+      # which fails in ways that still report success. Fail loudly and early instead.
+      - name: Check token secret is set
+        env:
+          TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::GH_STATS_TOKEN is empty or not set as a repository secret"
+            exit 1
+          fi
+          echo "GH_STATS_TOKEN is set (${#TOKEN} characters)"
+
       # Runs first: this action writes into dist/ and may clear it.
       - name: Pacman contribution graph
         uses: abozanona/pacman-contribution-graph@main
