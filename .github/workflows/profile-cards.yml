@@ -46,7 +46,6 @@ jobs:
           card: stats
           path: dist/stats.svg
           token: ${{ secrets.GH_STATS_TOKEN }}
-          fail_on_error: "true"
           options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_rank=false&theme=dracula&hide_border=false&locale=en
 
       - name: Languages card
@@ -55,7 +54,6 @@ jobs:
           card: top-langs
           path: dist/languages.svg
           token: ${{ secrets.GH_STATS_TOKEN }}
-          fail_on_error: "true"
           options: username=${{ github.repository_owner }}&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false&locale=en
 
       # Input is `file`, not `output_path` -- the upstream README example is wrong.
@@ -69,7 +67,9 @@ jobs:
           token: ${{ secrets.GH_STATS_TOKEN }}
           file: dist/trophy.svg
           theme: dracula
-          max-cols: "-1"
+          # max-cols omitted deliberately: the script already defaults to -1 (auto),
+          # and passing "-1" makes Deno's parseArgs read it as a flag, so cols ends up
+          # empty and parseInt("") is NaN -> exit 2.
           max-rows: "1"
           margin-width: "8"
           margin-height: "8"
@@ -90,10 +90,16 @@ jobs:
           shopt -s nullglob
           for f in dist/*.svg; do
             if grep -q "Something went wrong" "$f"; then
-              echo "::warning::$(basename "$f") rendered an error card - not publishing"
+              detail=$(sed 's/<[^>]*>/ /g' "$f" | tr -s ' \n' ' ' | cut -c1-300)
+              echo "::warning::$(basename "$f") error card: $detail"
               rm "$f"
             fi
           done
+          if [ -f dist/trophy.svg ]; then
+            echo "trophy.svg generated ($(wc -c < dist/trophy.svg) bytes)"
+          else
+            echo "::warning::trophy.svg missing - the Trophy card step failed"
+          fi
 
       # Copies into the existing branch instead of force-pushing, so nothing
       # already published is lost.
