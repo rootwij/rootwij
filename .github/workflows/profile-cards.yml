@@ -25,12 +25,15 @@ jobs:
 
       # Official github-readme-stats action -- renders the same cards as the
       # (currently 503) public instance, so `options` takes the same query string.
+      # GH_STATS_TOKEN is a classic PAT with no scopes. GITHUB_TOKEN is repo-scoped
+      # and returns "Resource not accessible by integration" for the user-level
+      # queries the stats and trophy cards make.
       - name: Stats card
         uses: readme-tools/github-readme-stats-action@v1
         with:
           card: stats
           path: dist/stats.svg
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_STATS_TOKEN }}
           fail_on_error: "true"
           options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_rank=false&theme=dracula&hide_border=false&locale=en
 
@@ -39,9 +42,22 @@ jobs:
         with:
           card: top-langs
           path: dist/languages.svg
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_STATS_TOKEN }}
           fail_on_error: "true"
           options: username=${{ github.repository_owner }}&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false&locale=en
+
+      # Input is `file`, not `output_path` -- the upstream README example is wrong.
+      - name: Trophy card
+        uses: Erik-Donath/github-profile-trophy@feature/generate-svg
+        with:
+          username: ${{ github.repository_owner }}
+          token: ${{ secrets.GH_STATS_TOKEN }}
+          file: dist/trophy.svg
+          theme: dracula
+          max-cols: "-1"
+          max-rows: "1"
+          margin-width: "8"
+          margin-height: "8"
 
       - name: Snake contribution graph
         uses: Platane/snk/svg-only@v3
