@@ -70,6 +70,19 @@ jobs:
             dist/snake.svg
             dist/snake-dark.svg?palette=github-dark
 
+      # github-readme-stats renders a valid SVG saying "Something went wrong" when the
+      # API call fails, and fail_on_error does not catch that case. Drop those so the
+      # previously published good card survives instead of being overwritten.
+      - name: Discard error cards
+        run: |
+          shopt -s nullglob
+          for f in dist/*.svg; do
+            if grep -q "Something went wrong" "$f"; then
+              echo "::warning::$(basename "$f") rendered an error card - not publishing"
+              rm "$f"
+            fi
+          done
+
       # Copies into the existing branch instead of force-pushing, so nothing
       # already published is lost.
       - name: Publish cards to output branch
