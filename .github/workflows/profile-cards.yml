@@ -27,7 +27,27 @@ jobs:
             echo "::error::GH_STATS_TOKEN is empty or not set as a repository secret"
             exit 1
           fi
-          echo "GH_STATS_TOKEN is set (${#TOKEN} characters)"
+          echo "Length: ${#TOKEN} characters (40 = classic, 93 = fine-grained)"
+
+          headers=$(curl -sI -H "Authorization: token $TOKEN" https://api.github.com/user | tr -d '\r')
+          status=$(printf '%s' "$headers" | head -1)
+          scopes=$(printf '%s' "$headers" | grep -i '^x-oauth-scopes:' || echo "x-oauth-scopes: (none)")
+          echo "GET /user -> $status"
+          echo "$scopes"
+
+          case "$status" in
+            *401*) echo "::error::Token is invalid or revoked. Generate a new classic PAT and update the secret." ; exit 1 ;;
+          esac
+          if printf '%s' "$scopes" | grep -qi 'read:user'; then
+            echo "read:user present"
+          else
+            if [ "${#TOKEN}" -gt 50 ]; then
+              echo "::error::This looks like a fine-grained token (no x-oauth-scopes header). Both card generators need a classic PAT with read:user + public_repo."
+            else
+              echo "::error::Classic token is missing the read:user scope. Edit it at https://github.com/settings/tokens, tick read:user + public_repo, and re-run."
+            fi
+            exit 1
+          fi
 
       # Runs first: this action writes into dist/ and may clear it.
       - name: Pacman contribution graph
@@ -90,7 +110,7 @@ jobs:
           shopt -s nullglob
           for f in dist/*.svg; do
             if grep -q "Something went wrong" "$f"; then
-              detail=$(sed 's/<[^>]*>/ /g' "$f" | tr -s ' \n' ' ' | cut -c1-300)
+              detail=$(sed '/<style>/,/<\/style>/d' "$f" | sed 's/<[^>]*>/ /g' | tr -s ' \n' ' ' | cut -c1-300)
               echo "::warning::$(basename "$f") error card: $detail"
               rm "$f"
             fi
