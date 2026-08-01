@@ -47,7 +47,10 @@ jobs:
           options: username=${{ github.repository_owner }}&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false&locale=en
 
       # Input is `file`, not `output_path` -- the upstream README example is wrong.
+      # Non-blocking: this is an unreleased fork branch, and a failure here must not
+      # skip the snake/publish steps below and freeze every other card.
       - name: Trophy card
+        continue-on-error: true
         uses: Erik-Donath/github-profile-trophy@feature/generate-svg
         with:
           username: ${{ github.repository_owner }}
