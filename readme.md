@@ -4,9 +4,7 @@
 
 ###
 
-<div data-importer="image" align="center">
-  <img data-importer="image" height="36" src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXh6Y3RnZzNpZW0xN2ZpZXVzOTkyMm9sdDRlY3l6Yng2eWQwNHlwbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/grvLpQetU7o0fawogA/giphy.gif"  />
-</div>
+
 
 ###
 
